@@ -2,8 +2,10 @@ import 'package:chat_app/screens/auth/register.dart';
 import 'package:chat_app/screens/ui/home.dart';
 import 'package:chat_app/widgets/custom_botton.dart';
 import 'package:chat_app/widgets/custom_text_form_field.dart';
+import 'package:chat_app/widgets/google_sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 class LoginPage extends StatefulWidget {
@@ -62,6 +64,7 @@ class _LoginPageState extends State<LoginPage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+                          SizedBox(height: 120),
                           CustomTextFormField(
                             onChanged: (data) {
                               email = data;
@@ -136,6 +139,35 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                               ),
                             ],
+                          ),
+                          SizedBox(height: 60),
+                          // google sign in botton
+                          SignIngoogle(
+                            onTap: () {
+                              isloading = true;
+                              Future<UserCredential> signInWithGoogle() async {
+                                // Trigger the authentication flow
+                                final GoogleSignInAccount? googleUser =
+                                    await GoogleSignIn().signIn();
+
+                                // Obtain the auth details from the request
+                                final GoogleSignInAuthentication? googleAuth =
+                                    await googleUser?.authentication;
+
+                                // Create a new credential
+                                final credential =
+                                    GoogleAuthProvider.credential(
+                                      accessToken: googleAuth?.accessToken,
+                                      idToken: googleAuth?.idToken,
+                                    );
+
+                                // Once signed in, return the UserCredential
+                                return await FirebaseAuth.instance
+                                    .signInWithCredential(credential);
+                              }
+
+                              isloading = false;
+                            },
                           ),
                         ],
                       ),
