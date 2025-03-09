@@ -21,6 +21,23 @@ class _LoginPageState extends State<LoginPage> {
   GlobalKey<FormState> formkey = GlobalKey();
   bool isloading = false;
   bool obscure = true;
+  Future<UserCredential> signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    return await FirebaseAuth.instance.signInWithCredential(credential);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -143,30 +160,23 @@ class _LoginPageState extends State<LoginPage> {
                           SizedBox(height: 60),
                           // google sign in botton
                           SignIngoogle(
-                            onTap: () {
+                            onTap: () async {
                               isloading = true;
-                              Future<UserCredential> signInWithGoogle() async {
-                                // Trigger the authentication flow
-                                final GoogleSignInAccount? googleUser =
-                                    await GoogleSignIn().signIn();
-
-                                // Obtain the auth details from the request
-                                final GoogleSignInAuthentication? googleAuth =
-                                    await googleUser?.authentication;
-
-                                // Create a new credential
-                                final credential =
-                                    GoogleAuthProvider.credential(
-                                      accessToken: googleAuth?.accessToken,
-                                      idToken: googleAuth?.idToken,
-                                    );
-
-                                // Once signed in, return the UserCredential
-                                return await FirebaseAuth.instance
-                                    .signInWithCredential(credential);
+                              setState(() {});
+                              // signInWithGoogle();
+                              try {
+                                UserCredential user = await signInWithGoogle();
+                                Navigator.pushNamed(
+                                  context,
+                                  HomePage.routname,
+                                  arguments: user.user!.email,
+                                );
+                              } catch (e) {
+                                showSnackBar(context, "${e}");
+                                print(e);
                               }
-
                               isloading = false;
+                              setState(() {});
                             },
                           ),
                         ],
