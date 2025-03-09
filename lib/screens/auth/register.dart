@@ -35,13 +35,26 @@ class _RegisterPageState extends State<RegisterPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Row(
                   children: [
-                    IconButton(
-                      onPressed: () {
+                    GestureDetector(
+                      onTap: () {
                         Navigator.pop(context);
                       },
-                      icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+                      child: Container(
+                        padding: EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: Icon(
+                            Icons.arrow_back_ios,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
                     ),
-                    SizedBox(width: 100),
+                    SizedBox(width: 95),
                     Text(
                       "Sing Up",
                       style: TextStyle(
